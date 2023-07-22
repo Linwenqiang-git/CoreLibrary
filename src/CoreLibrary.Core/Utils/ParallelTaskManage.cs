@@ -1,4 +1,8 @@
-﻿namespace CoreLibrary.Core
+﻿using Microsoft.Extensions.Logging;
+
+using System.Numerics;
+
+namespace CoreLibrary.Core
 {
     /// <summary>
     /// 并行任务
@@ -8,10 +12,12 @@
         private Dictionary<int, Task> _taskDic;
         private List<int>? _exceptionTaskIds;
         private int errorCode;
-        public ParallelTaskManage()
+        private ILogger<ParallelTaskManage> _logger;
+        public ParallelTaskManage(ILogger<ParallelTaskManage> logger)
         {
             _taskDic = new Dictionary<int, Task>();
             errorCode = -1;
+            _logger = logger;
         }
         #region 运行任务
         /// <summary>
@@ -68,8 +74,13 @@
             {
                 return ((Task<T>)task).Result; // 返回任务的结果
             }
-            //日志上报
-            Console.WriteLine($"Task information was not obtained,the task id is: {taskId}");
+            
+            if (taskId == errorCode)
+            {
+                //日志上报
+                _logger.LogError($"Add task error");
+            }
+            
             return default(T);
         }
         /// <summary>
@@ -105,8 +116,8 @@
                         this._exceptionTaskIds.Add(task.Id);
                         if (task.Exception != null)
                         {
-                            //日志上报                            
-                            Console.WriteLine($"An error occurred in task {task.Id}: {task.Exception?.InnerException?.Message}");
+                            //日志上报                                                        
+                            _logger.LogError($"An error occurred in task {task.Id}: {task.Exception?.InnerException?.Message}");
                         }
                     }
                 }
