@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CoreLibrary.Core.Consts;
 
-namespace CoreLibrary.Core.Responses
-{    
+namespace CoreLibrary.Core
+{
     public class ApiResult
     {
-        protected const string successful = "Successful";
-        protected const string fail = "Request Error";
+        
         /// <summary>
         /// 信息
         /// </summary>
@@ -21,7 +16,7 @@ namespace CoreLibrary.Core.Responses
         
         public ApiResult() 
         {
-            Message = successful;
+            Message = MessageConst.Successful;
             Code = (int)ApiResultCodeEnum.OK;
         }
         /// <summary>
@@ -32,7 +27,7 @@ namespace CoreLibrary.Core.Responses
         public ApiResult(int code = (int)ApiResultCodeEnum.OK, string message = ""):this()
         {
             if (string.IsNullOrWhiteSpace(message) && code == (int)ApiResultCodeEnum.OK)
-                message = successful;
+                message = MessageConst.Successful;
             Code = code;
             Message = message;            
         }        
@@ -106,7 +101,7 @@ namespace CoreLibrary.Core.Responses
         public new static ApiResult<T> Failed(ApiResultCodeEnum code, string message)
         {
             if (string.IsNullOrWhiteSpace(message))
-                message = fail;
+                message = MessageConst.Fail;
             return new ApiResult<T>((int)code, message);
         }
     }
